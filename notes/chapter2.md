@@ -8,3 +8,27 @@
 - To set a status code, look at the `http.ResponseWriter` type in the `net/http` package
   - If we call `Write` without setting a status code, the `200 OK` status code will be set by default
   - If we want to set our own status code, we need to call `WriteHeader` before calling `Write`
+
+### The http.Handler Type
+- When `http.HandleFunc` is called to register a handler, `DefaultServeMux` is used behind the scenes
+```go
+// from 'net/http'
+func HandleFunc(pattern string, handler func(ResponseWriter, *Request)) {
+  DefaultServeMux.HandleFunc(pattern, handler)
+}
+```
+
+- `http.Handler` is an interface type with a `ServeHTTP` method
+```go
+// from 'net/http'
+type Handler interface {
+  ServeHTTP(ResponseWriter, *Request)
+}
+```
+
+- The second argument to `ListenAndServe` can be a `http.Handler` interface
+  - If `nil` is passed, `DefaultServeMux` is used
+  - we cannot just pass in any function that has arguments `(ResponseWriter, *Request)` into `ListenAndServe` - need to create a type that implements the `http.Handler` interface, i.e. implements the `ServeHTTP` method
+```go
+func ListenAndServe(addr string, handler Handler) error
+```
