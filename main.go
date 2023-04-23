@@ -38,6 +38,13 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 `)
 }
 
+func galleriesHandler(w http.ResponseWriter, r *http.Request) {
+	galleryID := chi.URLParam(r, "gallery_id")
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write([]byte(fmt.Sprintf("Gallery ID: %v", galleryID)))
+}
+
 func main() {
 	r := chi.NewRouter()
 	r.Get("/", homeHandler)
@@ -46,6 +53,7 @@ func main() {
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
+	r.Get("/galleries/{gallery_id}", galleriesHandler)
 
 	fmt.Println("Starting the server on :3000...")
 	http.ListenAndServe(":3000", r)
