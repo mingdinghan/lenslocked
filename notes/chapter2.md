@@ -32,3 +32,18 @@ type Handler interface {
 ```go
 func ListenAndServe(addr string, handler Handler) error
 ```
+
+### The http.HandlerFunc Type
+- `net/http` also provides the `http.HandlerFunc` function type, which also implements the `Handler` interface
+```go
+type HandlerFunc func(ResponseWriter, *Request)
+
+func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
+  f(w, r)
+}
+```
+- any handler function, such as `pathHandler(w http.ResponseWriter, r *http.Request)`, can be converted into `HandlerFunc`
+  - which has a `ServeHTTP` method which implements the `Handler` interface
+```go
+http.ListenAndServe(":3000", http.HandlerFunc(pathHandler))
+```
